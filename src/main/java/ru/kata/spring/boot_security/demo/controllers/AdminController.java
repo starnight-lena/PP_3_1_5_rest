@@ -8,6 +8,8 @@ import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.thymeleaf.exceptions.TemplateProcessingException;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
@@ -19,8 +21,11 @@ public class AdminController {
     private UserServiceImpl userService;
 
     @GetMapping("/admin")
-    public String userList(Model model) {
+    public String userList(@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
         model.addAttribute("allUsers", userService.allUsers());
+        model.addAttribute("userForm", new User());
+        model.addAttribute("allRoles", userService.allRoles());
+        model.addAttribute("user", principal);
         return "admin";
     }
 
@@ -36,55 +41,66 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    /*@GetMapping("/admin/gt/{userId}")
-    public String  gtUser(@PathVariable("userId") Long userId, Model model) {
-        model.addAttribute("allUsers", userService.usergtList(userId));
-        return "admin";
-    }*/
 
     @GetMapping("/new")
-    public String registration(Model model) {
+    public String registration(@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
         model.addAttribute("userForm", new User());
         model.addAttribute("allRoles", userService.allRoles());
+        model.addAttribute("user", principal);
 
         return "new";
     }
 
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    @PostMapping("/new")
+    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult,@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
         try {
             if (userService.saveUser(userForm, bindingResult))
                 return "redirect:/admin";
             else {
                 model.addAttribute("allRoles", userService.allRoles());
+                model.addAttribute("user", principal);
                 return "new";
             }
             //return userService.saveUser(userForm, bindingResult) ? "redirect:/admin" : "new";
         } catch (AssertionFailure | UnexpectedRollbackException e) {
+            model.addAttribute("user", principal);
             return "new";
         }
     }
 
-    @GetMapping("/admin/{id}/edit")
-    public String edit(@ModelAttribute("id") Long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
-        model.addAttribute("allRoles", userService.allRoles());
-        return "edit";
-    }
 
 
-    @PatchMapping("/admin/{id}/edit")
-    public String update(@ModelAttribute("user") @Valid User updateuser, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return "edit";
+    @PostMapping("/admin/{id}/edit")
+    public String update(@ModelAttribute("user") @Valid User updateuser, BindingResult bindingResult, RedirectAttributes atts) {
+        if (bindingResult.hasErrors()) {
+            atts.addAttribute("hasErrors", true);
+            return "admin";
+        }
+
 
         userService.update(updateuser);
         return "redirect:/admin";
     }
+
+
 
     @GetMapping("/user")
     public String show(@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
         model.addAttribute("user", principal);
         return "user";
     }
+
+    @GetMapping("/deleteUser")
+    @ResponseBody
+    public User deleteUser(Long userId) {
+        return userService.findUserById(userId);
+    }
+
+    @GetMapping("/editUser")
+    @ResponseBody
+    public User editUser(Long userId) {
+
+        return userService.findUserById(userId);
+    }
+
 }

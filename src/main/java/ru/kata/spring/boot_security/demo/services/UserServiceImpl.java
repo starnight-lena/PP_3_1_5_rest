@@ -112,18 +112,10 @@ public class UserServiceImpl implements UserService {
 
     //@Transactional
     public void update(User updateUser) {
-        updateUser.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
+        if (updateUser.getPassword() != "") {
+            updateUser.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
+        }
         em.merge(updateUser);
     }
 
-
-    /*public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
-    }
-
-    public List<Role> rolegtList(Long idMin) {
-        return em.createQuery("SELECT u FROM Role u WHERE u.id > :paramId", Role.class)
-                .setParameter("paramId", idMin).getResultList();
-    }*/
 }

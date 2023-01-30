@@ -1,45 +1,186 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>New person</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="webjars/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="webjars/bootstrap/4.0.0/css/bootstrap.min.css"/>
+    <title>Admin</title>
+    <style type="text/css">
+        .container-fluid {
+            height: 100vh;
+        }
+
+    </style>
 </head>
 <body>
-<form th:method="POST" th:action="@{/add}" th:object="${userForm}">
-  <label for="username">Enter username: </label>
-  <input type="text" th:field="*{username}" id="username"/>
-<div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</div>
-  <br/>
-  <label for="firstName">Enter name: </label>
-  <input type="text" th:field="*{firstName}" id="firstName"/>
-  <div style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</div>
-  <br/>
-  <label for="lastName">Enter lastname: </label>
-  <input type="text" th:field="*{lastName}" id="lastName"/>
-  <div style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</div>
-  <br/>
-  <label for="password">Enter password: </label>
-  <input type="password" th:field="*{password}" id="password"/>
-  <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
-  <br/>
-  <label for="age">Enter age: </label>
-  <input type="text" th:field="*{age}" id="age"/>
-  <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</div>
-  <br/>
-  <label for="email">Enter email: </label>
-  <input type="text" th:field="*{email}" id="email"/>
-  <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
- <br/>
-      <label for="roles">Roles</label>
-      <div id="roles">
-        <div th:each="role : ${allRoles}">
-          <input type="checkbox" name="roles" th:id="${role.name}" th:value="${role.id}">
-          <label th:for="${role.name}" th:text="${role.name}"/>
+<div>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="text-white"><span class="font-weight-bold" th:text="${user.getEmail()}"/> with roles:
+            <th:block th:each="role : *{user.getRoles()}">
+                &nbsp;<span th:text="${role.name}"/>
+            </th:block>
         </div>
-      </div>
-  <input type="submit" value="Create!"/>
+        <div><a type="button" class="text-muted" th:href="@{/logout}">Logout</a></div>
+    </nav>
+</div>
 
-</form>
-<p><a type="button" th:href="@{/logout}">Logout</a></p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 p-0">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active border-0" data-toggle="list"
+                   href="#adminPanel" role="tab">Admin</a>
+                <a class="list-group-item list-group-item-action border-0" data-toggle="list" href="#profile"
+                   role="tab">User</a>
+            </div>
+        </div>
+        <div class="col-10 px-0 bg-light">
+            <div class="container-fluid">
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane active" id="adminPanel" role="tabpanel">
+                        <h1 class="m-3 fw-bold">Admin panel</h1>
+                        <ul class="nav nav-tabs">
+                                <a class="nav-link" href="/admin">Users table</a>
+                                <a class="nav-link active" data-toggle="tab">New User</a>
+                        </ul>
+                            <!--Form for new User-->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="m-1">
+                                            <h4>Add new User</h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <div class="row justify-content-center align-items-center bg-white">
+                                            <div class="col-4">
+                                                <form class="text-center" th:method="POST" th:action="@{/new}"
+                                                      th:object="${userForm}">
+                                                    <div class="form-group fw-bold">
+
+                                                        <div class="form-group m-3">
+                                                            <div class="form-group m-3">
+                                                                <label class="col-form-label">Username</label>
+                                                                <input type="text" class="form-control"
+                                                                       th:field="*{username}" id="username" value=""/>
+                                                                <span style="color:red" th:if="${#fields.hasErrors('username')}"
+                                                                     th:errors="*{username}">Username Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label class="col-form-label">First
+                                                                    mame</label>
+                                                                <input type="text" class="form-control"
+                                                                       th:field="*{firstName}" id="firstName" />
+                                                                <span style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label class="col-form-label">Last
+                                                                    name</label>
+                                                                <input type="text" class="form-control"
+                                                                       th:field="*{lastName}" id="lastName"/>
+                                                                <span style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label class="col-form-label">Age</label>
+                                                                <input type="number" class="form-control"
+                                                                       th:field="*{age}" id="age"
+                                                                       min="18" max="100" value="18"/>
+                                                                <span style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label
+                                                                        class="col-form-label">Email</label>
+                                                                <input type="text" class="form-control"
+                                                                       th:field="*{email}" id="email"/>
+                                                                <span style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label
+                                                                        class="col-form-label">Password</label>
+                                                                <input type="password" class="form-control"
+                                                                       th:field="*{password}" id="password" value=""/>
+                                                                <span style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
+                                                            </div>
+
+                                                            <div class="form-group m-3">
+                                                                <label for="roles">Role</label>
+                                                                <select class="form-select w-100" multiple
+                                                                        aria-label="multiple select example"
+                                                                        size="2"
+                                                                        id="roles"
+                                                                        name="roles"
+                                                                        th:field="*{roles}">
+                                                                    <option th:each="role : ${allRoles}"
+                                                                            th:id="${role.name}"
+                                                                            th:value="${role.id}"
+                                                                            th:text="${role.name}"
+                                                                            th:selected="${role.name=='ROLE_USER'}"></option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-success">Add new user</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <!--End Form for new User-->
+
+                    </div>
+                    <div class="tab-pane " id="profile" role="tabpanel">
+                        <h1 class="m-3 fw-bold">User information-page</h1>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="m-1">
+                                    <h4>About user</h4>
+                                </div>
+                            </div>
+
+                            <div class="card-body" bg-primary text-white>
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td th:text="${user.getId()}"></td>
+                                        <td th:text="${user.getUsername()}"></td>
+                                        <td th:text="${user.getFirstName()}"></td>
+                                        <td th:text="${user.getLastName()}"></td>
+                                        <td th:text="${user.getAge()}"></td>
+                                        <td th:text="${user.getEmail()}"></td>
+                                        <td>
+                                            <th:block th:each="role : *{user.getRoles()}">
+                                                &nbsp;<span th:text="${role.name}"/>
+                                            </th:block>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

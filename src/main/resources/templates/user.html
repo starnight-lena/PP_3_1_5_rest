@@ -1,21 +1,88 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Information about user</title>
+    <script type="text/javascript" src="webjars/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+    <link rel="stylesheet" href="webjars/bootstrap/4.0.0/css/bootstrap.min.css"/>
+    <title>User Page</title>
+    <style type="text/css">
+        .container-fluid {
+            height: 100vh;
+        }
+
+    </style>
 </head>
 <body>
-<h1>User information-page</h1>
-<p>Id: <span th:text="${user.getId()}"/></p>
-<p>Login: <span th:text="${user.getUsername()}"/></p>
-<p>First Name: <span th:text="${user.getFirstName()}"/></p>
-<p>Last Name: <span th:text="${user.getLastName()}"/></p>
-<p>Age: <span th:text="${user.getAge()}"/></p>
-<p>Email: <span th:text="${user.getEmail()}"/></p>
-Roles:  <th:block th:each="role : *{user.getRoles()}">
-    &nbsp;<span th:text="${role.name}"/>
-</th:block>
+<div>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="text-white"><span class="font-weight-bold" th:text="${user.getEmail()}"/> with roles:
+            <th:block th:each="role : *{user.getRoles()}">
+                &nbsp;<span th:text="${role.name}"/>
+            </th:block>
+        </div>
+        <div><a type="button" class="text-muted" th:href="@{/logout}">Logout</a></div>
+    </nav>
+</div>
 
-<p><a type="button" th:href="@{/logout}">Logout</a></p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 p-0">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action border-0 active" data-toggle="list" href="#profile"
+                   role="tab">User</a>
+            </div>
+        </div>
+        <div class="col-10 px-0 bg-light">
+            <div class="container-fluid">
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane active show" id="profile" role="tabpanel">
+                        <h1 class="m-3 fw-bold">User information-page</h1>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="m-1">
+                                    <h4>About user</h4>
+                                </div>
+                            </div>
+
+                            <div class="card-body" bg-primary text-white>
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td th:text="${user.getId()}"></td>
+                                        <td th:text="${user.getUsername()}"></td>
+                                        <td th:text="${user.getFirstName()}"></td>
+                                        <td th:text="${user.getLastName()}"></td>
+                                        <td th:text="${user.getAge()}"></td>
+                                        <td th:text="${user.getEmail()}"></td>
+                                        <td>
+                                            <th:block th:each="role : *{user.getRoles()}">
+                                                &nbsp;<span th:text="${role.name}"/>
+                                            </th:block>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
