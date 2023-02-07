@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.services;
+package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -6,9 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ru.kata.spring.boot_security.demo.entities.Role;
-import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.repositories.*;
+import ru.kata.spring.boot_security.demo.entity.User;
+import ru.kata.spring.boot_security.demo.repository.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
         if (findUser != null) {
             return false;
         }
-        user.setRoles(user.getRoles());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
@@ -75,8 +73,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUser(Long id, User user) {
-        user.setId(id);
+    public User updateUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.saveAndFlush(user);
     }

@@ -103,7 +103,7 @@
                                                     <div class="modal-dialog" modal-dialog-centered>
                                                         <div class="modal-content">
                                                             <div class="modal-content">
-                                                                <form th:action="@{/admin/edit/{id}(id=${user.id})}"
+                                                                <form th:action="@{/admin/edit/}"
                                                                       method="GET" th:object="${user}">
 
                                                                     <div class="modal-header">
@@ -124,7 +124,7 @@
                                                                                            id="id"
                                                                                            th:name="id"
                                                                                            th:value="${user.id}"
-                                                                                           th:type="number" disabled/>
+                                                                                           th:type="number" readonly/>
 
 
                                                                                     <label class="col-form-label"
@@ -210,7 +210,7 @@
                                                 <div aria-hidden="true" aria-labelledby="editModalLabel"
                                                      id="deleteModal"
                                                      tabindex="-1" class="modal fade" th:id="${'deleteModal'+user.id}">
-                                                    <form th:action="@{/admin/delete/{id}(id=${user.id})}"
+                                                    <form th:action="@{/admin/delete/}"
                                                           method="GET" th:object="${user}">
                                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                                             <div class="modal-content">
@@ -299,8 +299,7 @@
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <input type="hidden" name="userId"
-                                                                           id="paramIdDelete"/>
-                                                                    <input type="hidden" name="action" value="delete"/>
+                                                                           id="paramIdDelete" th:value="${user.id}"/>
                                                                     <button type="button" class="btn btn-secondary"
                                                                             data-dismiss="modal">Close
                                                                     </button>

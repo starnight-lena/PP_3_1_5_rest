@@ -1,16 +1,15 @@
-package ru.kata.spring.boot_security.demo.controllers;
+package ru.kata.spring.boot_security.demo.controller;
 
 import org.hibernate.AssertionFailure;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.services.RoleServiceImpl;
-import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.entity.User;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 import javax.validation.Valid;
 
@@ -21,14 +20,13 @@ public class AdminController {
 
     private final RoleServiceImpl roleService;
 
-    @Autowired
     public AdminController(UserServiceImpl userService, RoleServiceImpl roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @GetMapping
-    public String getAllUsers(@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
+    public String getAllUsers(@AuthenticationPrincipal User principal, Model model) {
         model.addAttribute("allUsers", userService.allUsers());
         model.addAttribute("userForm", new User());
         model.addAttribute("allRoles", roleService.allRoles());
@@ -38,7 +36,7 @@ public class AdminController {
 
 
     @GetMapping("/new")
-    public String getCreationUserForm(@CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
+    public String getCreationUserForm(@AuthenticationPrincipal User principal, Model model) {
         model.addAttribute("userForm", new User());
         model.addAttribute("allRoles", roleService.allRoles());
         model.addAttribute("userAuthorized", principal);
@@ -47,7 +45,7 @@ public class AdminController {
     }
 
     @PostMapping("/new")
-    public String createUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, @CurrentSecurityContext(expression = "authentication.principal") User principal, Model model) {
+    public String createUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, @AuthenticationPrincipal User principal, Model model) {
         try {
             if (userService.saveUser(userForm, bindingResult))
                 return "redirect:/admin";
@@ -63,18 +61,18 @@ public class AdminController {
     }
 
 
-    @GetMapping("/edit/{id}")
-    public String updateUser(@ModelAttribute("user") User updateuser, BindingResult bindingResult, @PathVariable("id") Long id) {
+    @GetMapping ("/edit/")
+    public String updateUser(@ModelAttribute("user") User updateuser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/edit/{id}";
+            return "redirect:/edit/";
         }
-        userService.updateUser(id, updateuser);
+        userService.updateUser(updateuser);
         return "redirect:/admin";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
+    @GetMapping("/delete/")
+    public String deleteUser(@RequestParam Long userId) {
+        userService.deleteUser(userId);
         return "redirect:/admin";
     }
 
