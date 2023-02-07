@@ -5,20 +5,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "t_user")
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
-    @Size(min=2, message = "Не меньше 5 знаков")
+    @Size(min = 2, message = "Не меньше 5 знаков")
     private String username;
-    @Size(min=2, message = "Не меньше 5 знаков")
+    @Size(min = 2, message = "Не меньше 2 знаков")
     private String password;
 
     @Column(name = "name")
@@ -30,7 +28,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @NotNull(message = "age: positive number value is required")
-    @Min(value=18, message="age: positive number, min 18 is required")
+    @Min(value = 18, message = "age: positive number, min 18 is required")
     @Column(name = "age")
     private int age;
 
@@ -41,8 +39,11 @@ public class User implements UserDetails {
 
     @Transient
     private String passwordConfirm;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -87,7 +88,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
@@ -121,7 +121,6 @@ public class User implements UserDetails {
         return getRoles();
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -130,13 +129,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -145,11 +137,38 @@ public class User implements UserDetails {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
     public boolean hasRole(int roleId) {
-        if (null == roles|| 0 == roles.size()) {
+        if (null == roles || 0 == roles.size()) {
             return false;
         }
         Optional<Role> findRole = roles.stream().filter(role -> roleId == role.getId()).findFirst();
         return findRole.isPresent();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!id.equals(user.id)) return false;
+        if (!username.equals(user.username)) return false;
+        if (!password.equals(user.password)) return false;
+        if (!firstName.equals(user.firstName)) return false;
+        if (!lastName.equals(user.lastName)) return false;
+        return roles.equals(user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + roles.hashCode();
+        return result;
     }
 }
