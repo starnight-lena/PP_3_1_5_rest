@@ -58,20 +58,7 @@
                                         <th>Role</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td th:text="${user.getId()}"></td>
-                                        <td th:text="${user.getUsername()}"></td>
-                                        <td th:text="${user.getFirstName()}"></td>
-                                        <td th:text="${user.getLastName()}"></td>
-                                        <td th:text="${user.getAge()}"></td>
-                                        <td th:text="${user.getEmail()}"></td>
-                                        <td>
-                                            <th:block th:each="role : *{user.getRoles()}">
-                                                &nbsp;<span th:text="${role.name}"/>
-                                            </th:block>
-                                        </td>
-                                    </tr>
+                                    <tbody id="tbody-user">
                                     </tbody>
 
                                 </table>
@@ -83,5 +70,8 @@
         </div>
     </div>
 </div>
+
+
+<script th:src="@{/js/infoUser.js}"></script>
 </body>
 </html>
