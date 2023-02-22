@@ -61,7 +61,7 @@ public class AdminController {
     }
 
 
-    @GetMapping ("/edit/")
+    @GetMapping("/edit/")
     public String updateUser(@ModelAttribute("user") User updateuser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "redirect:/edit/";

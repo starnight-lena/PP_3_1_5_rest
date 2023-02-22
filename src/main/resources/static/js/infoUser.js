@@ -3,19 +3,21 @@ const userurl = '/api/user';
 async function getUserPage() {
     let page = await fetch(userurl);
 
-    if(page.ok) {
-        let user = await  page.json();
+    if (page.ok) {
+        let user = await page.json();
         getInformationAboutUser(user);
     } else {
         alert(`Error, ${page.status}`)
     }
 }
-function  getInformationAboutUser(user) {
+
+function getInformationAboutUser(user) {
     const tableBody = document.getElementById('tbody-user');
     let dataHtml = '';
     let roles = [];
     console.log('userSata', JSON.stringify(user))
-    for (let role of user.roles) {roles
+    for (let role of user.roles) {
+        roles
         roles.push(" " + role.name.toString()
             .replaceAll("ROLE_", ""))
     }
@@ -32,4 +34,5 @@ function  getInformationAboutUser(user) {
 
     tableBody.innerHTML = dataHtml;
 }
+
 getUserPage();

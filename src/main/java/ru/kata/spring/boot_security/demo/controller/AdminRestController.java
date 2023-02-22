@@ -38,7 +38,7 @@ public class AdminRestController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PutMapping()
+    @PatchMapping()
     public ResponseEntity<HttpStatus> updateUser(@RequestBody User user) {
         userService.updateUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -49,10 +49,6 @@ public class AdminRestController {
         userService.deleteUser(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
-
-
-
 
 
 }

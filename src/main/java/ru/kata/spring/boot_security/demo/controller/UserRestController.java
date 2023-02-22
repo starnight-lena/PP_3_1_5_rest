@@ -18,6 +18,7 @@ public class UserRestController {
     public UserRestController(UserServiceImpl userService) {
         this.userService = userService;
     }
+
     @GetMapping()
     public ResponseEntity<User> getUser(Principal principal) {
         User user = userService.loadUserByUsername(principal.getName());
