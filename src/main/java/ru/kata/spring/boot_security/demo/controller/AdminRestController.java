@@ -6,17 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminRestController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
-    public AdminRestController(UserServiceImpl userService, RoleServiceImpl roleService) {
+    public AdminRestController(UserService userService) {
         this.userService = userService;
     }
 
