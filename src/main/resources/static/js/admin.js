@@ -1,4 +1,3 @@
-//const dbRoles = [{id: 1, role: "ROLE_ADMIN"}, {id: 2, role: "ROLE_USER"}]
 const token = document.querySelector("meta[name='_csrf']").content
 //all users
 const adminurl = '/api/admin';
@@ -26,9 +25,19 @@ async function loadRoles() {
             `<option value="${role.id}">${role.name}</option>
              `
     }
-    //delRole.innerHTML = dataHtml;
-    //newRoles.innerHTML = dataHtml;
     return dataHtml;
+}
+
+async function loadRoles2() {
+    const rolesBody = document.getElementById('roles');
+    let listRoles = await (await fetch(getrolesurl)).json();
+    let dataHtml = '';
+    for (let role of listRoles) {
+        dataHtml +=
+            `<option value="${role.id}">${role.name}</option>
+             `
+    }
+    rolesBody.innerHTML = dataHtml;
 }
 
 const currentUser = fetch(currentuserurl).then(response => response.json())
@@ -227,7 +236,6 @@ async function editUser() {
 
 const newUserForm = document.getElementById('createUserForm');
 const newRoles = document.getElementById('roles');
-newRoles.innerHTML = await loadRoles()
 newUserForm.addEventListener('submit', addNewUser);
 
 

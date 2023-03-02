@@ -138,14 +138,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public boolean hasRole(int roleId) {
-        if (null == roles || 0 == roles.size()) {
-            return false;
-        }
-        Optional<Role> findRole = roles.stream().filter(role -> roleId == role.getId()).findFirst();
-        return findRole.isPresent();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

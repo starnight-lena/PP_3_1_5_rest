@@ -57,7 +57,7 @@ public class AdminRestController {
 
     @GetMapping("/userAuth")
     public ResponseEntity<User> showAuthUser() {
-        return new ResponseEntity<> (userService.getCurrentUser(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getCurrentUser(), HttpStatus.OK);
     }
 
 

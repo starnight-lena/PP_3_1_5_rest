@@ -16,6 +16,7 @@ public interface UserService {
     User updateUser(User user);
 
     User findUserById(Long id);
+
     User getCurrentUser();
 
 }

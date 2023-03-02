@@ -1,5 +1,19 @@
 const userurl = '/api/user';
 
+
+const infoUser = fetch(userurl).then(response => response.json())
+infoUser.then(user => {
+        let roles = ''
+        user.roles.forEach(role => {
+            roles += ' '
+            roles += role.name
+        })
+        console.log(roles)
+        document.getElementById("navbar-email").innerHTML = user.email
+        document.getElementById("navbar-roles").innerHTML = roles
+    }
+)
+
 async function getUserPage() {
     let page = await fetch(userurl);
 
