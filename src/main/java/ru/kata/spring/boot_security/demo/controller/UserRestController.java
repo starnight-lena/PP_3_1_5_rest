@@ -23,7 +23,6 @@ public class UserRestController {
 
     @GetMapping()
     public ResponseEntity<UserDetails> getUser(Principal principal) {
-        UserDetails user = userDetailsService.loadUserByUsername(principal.getName());
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(userDetailsService.loadUserByUsername(principal.getName()), HttpStatus.OK);
     }
 }

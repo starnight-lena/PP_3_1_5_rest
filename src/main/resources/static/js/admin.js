@@ -1,7 +1,49 @@
-const dbRoles = [{id: 1, role: "ROLE_ADMIN"}, {id: 2, role: "ROLE_USER"}]
+//const dbRoles = [{id: 1, role: "ROLE_ADMIN"}, {id: 2, role: "ROLE_USER"}]
 const token = document.querySelector("meta[name='_csrf']").content
 //all users
 const adminurl = '/api/admin';
+const currentuserurl = '/api/admin/userAuth';
+const getrolesurl = '/api/admin/roles'
+
+
+async function getRoles() {
+    let page = await fetch(getrolesurl);
+
+    if (page.ok) {
+        let listRoles = await page.json();
+        loadRoles(listRoles);
+    } else {
+        alert(`Error, ${page.status}`)
+    }
+}
+
+async function loadRoles() {
+    //const tableBody = document.getElementById('all-users');
+    let listRoles = await (await fetch(getrolesurl)).json();
+    let dataHtml = '';
+    for (let role of listRoles) {
+        dataHtml +=
+            `<option value="${role.id}">${role.name}</option>
+             `
+    }
+    //delRole.innerHTML = dataHtml;
+    //newRoles.innerHTML = dataHtml;
+    return dataHtml;
+}
+
+const currentUser = fetch(currentuserurl).then(response => response.json())
+console.log(currentUser)
+currentUser.then(user => {
+        let roles = ''
+        user.roles.forEach(role => {
+            roles += ' '
+            roles += role.name
+        })
+        console.log(roles)
+        document.getElementById("navbar-email").innerHTML = user.email
+        document.getElementById("navbar-roles").innerHTML = roles
+    }
+)
 
 async function getAdminPage() {
     let page = await fetch(adminurl);
@@ -67,17 +109,15 @@ async function deleteModalData(id) {
     let usersPageDel = await fetch(urlForDel);
     if (usersPageDel.ok) {
         let userData =
-            await usersPageDel.json().then(user => {
+            await usersPageDel.json().then(async user => {
                 delId.value = `${user.id}`;
                 delUsername.value = `${user.username}`;
                 delFirstName.value = `${user.firstName}`;
                 delLastName.value = `${user.lastName}`;
                 delAge.value = `${user.age}`;
                 delEmail.value = `${user.email}`;
-                delRole.innerHTML = `
-                    <option value="${dbRoles[0].id}">${dbRoles[0].role}</option>
-                    <option value="${dbRoles[1].id}">${dbRoles[1].role}</option>
-                   `
+                delRole.innerHTML = await loadRoles();
+
                 Array.from(delRole.options).forEach(opt => {
                     user.roles.forEach(role => {
                         if (role.name === opt.text) {
@@ -125,7 +165,7 @@ async function loadDataForEditModal(id) {
     const urlDataEd = 'api/admin/' + id;
     let usersPageEd = await fetch(urlDataEd);
     if (usersPageEd.ok) {
-        await usersPageEd.json().then(user => {
+        await usersPageEd.json().then(async user => {
             console.log('userData', JSON.stringify(user))
             editId.value = `${user.id}`;
             editUsername.value = `${user.username}`;
@@ -133,10 +173,7 @@ async function loadDataForEditModal(id) {
             editLastName.value = `${user.lastName}`;
             editAge.value = `${user.age}`;
             editEmail.value = `${user.email}`;
-            editRole.innerHTML = `
-                    <option value="${dbRoles[0].id}">${dbRoles[0].role}</option>
-                    <option value="${dbRoles[1].id}">${dbRoles[1].role}</option>
-                   `
+            editRole.innerHTML = await loadRoles();
             Array.from(editRole.options).forEach(opt => {
                 user.roles.forEach(role => {
                     if (role.name === opt.text) {
@@ -187,15 +224,12 @@ async function editUser() {
     })
 }
 
+
 const newUserForm = document.getElementById('createUserForm');
 const newRoles = document.getElementById('roles');
-
-newRoles.innerHTML = `
-                    <option value="${dbRoles[0].id}">${dbRoles[0].role}</option>
-                    <option value="${dbRoles[1].id}">${dbRoles[1].role}</option>
-                   `
-
+newRoles.innerHTML = await loadRoles()
 newUserForm.addEventListener('submit', addNewUser);
+
 
 async function addNewUser(event) {
     event.preventDefault();
@@ -231,4 +265,6 @@ async function addNewUser(event) {
     });
 
 }
+
+
 
